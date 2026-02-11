@@ -1,0 +1,32 @@
+# Windows
+Thumbs.db
+Desktop.ini
+
+# PHP
+*.log
+*.log.*
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Uploads (exclude user uploads)
+assets/uploads/*
+!assets/uploads/.htaccess
+!assets/uploads/index.html
+assets/uploads/profile/*
+!assets/uploads/profile/index.html
+
+# Environment
+.env
+.env.*
+
+# Cache
+cache/
+tmp/
+temp/

@@ -1,0 +1,301 @@
+<!-- 
+    PAGE LINKING STRUCTURE - COMPLETE WEB APPLICATION
+    
+    This file documents how all PHP pages link to each other
+    Use this as a reference guide for navigation flow
+-->
+
+<!-- 
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         COMPLETE PAGE MAP                                  ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+LEGEND:
+→  Links to
+←  Linked from
+◇  Authentication required
+○  No authentication needed
+✓  Form submission
+✗  Logout/Redirect
+-->
+
+<map>
+  <title>Web Application Site Map</title>
+
+  <!-- HOME PAGE -->
+  <page name="index.php" auth="○" type="public">
+    <title>Home - Web Application</title>
+    <path>/index.php</path>
+    <description>Landing page with features and call-to-action buttons</description>
+    <links>
+      <outbound>
+        <link to="register.php" condition="not_logged_in" text="Register Button">
+          <text>Create Account</text>
+        </link>
+        <link to="login.php" condition="not_logged_in" text="Login Button">
+          <text>Login</text>
+        </link>
+        <link to="dashboard.php" condition="logged_in" text="Dashboard Link">
+          <text>Go to Dashboard</text>
+        </link>
+        <link to="profile.php" condition="logged_in" text="Profile Link">
+          <text>View Profile</text>
+        </link>
+      </outbound>
+      <navigation>
+        <navbar>Register | Login</navbar>
+        <navbar condition="logged_in">Dashboard | Profile | Settings | Logout</navbar>
+      </navigation>
+    </links>
+  </page>
+
+  <!-- REGISTRATION PAGE -->
+  <page name="register.php" auth="○" type="public">
+    <title>Register - Create Account</title>
+    <path>/register.php</path>
+    <description>User registration form with validation</description>
+    <fields>
+      <input type="text" name="first_name" label="First Name" required="no"/>
+      <input type="text" name="last_name" label="Last Name" required="no"/>
+      <input type="text" name="username" label="Username" required="yes" min="3"/>
+      <input type="email" name="email" label="Email" required="yes"/>
+      <input type="password" name="password" label="Password" required="yes" min="6"/>
+      <input type="password" name="password_confirm" label="Confirm Password" required="yes"/>
+    </fields>
+    <links>
+      <outbound>
+        <link to="login.php" method="GET" text="Already have an account?">
+          <text>Login here</text>
+        </link>
+        <link to="login.php" method="POST" text="Back to Login Button">
+          <text>Back to Login</text>
+        </link>
+        <link to="index.php" method="GET" text="Back to Home">
+          <text>← Back to Home</text>
+        </link>
+        <link to="login.php" method="POST" condition="success" text="Redirect on successful registration">
+          <redirect>Registration successful! Please login with your credentials.</redirect>
+        </link>
+      </outbound>
+    </links>
+  </page>
+
+  <!-- LOGIN PAGE -->
+  <page name="login.php" auth="○" type="public">
+    <title>Login - Sign In</title>
+    <path>/login.php</path>
+    <description>User login form with email/password authentication</description>
+    <fields>
+      <input type="email" name="email" label="Email" required="yes"/>
+      <input type="password" name="password" label="Password" required="yes"/>
+    </fields>
+    <links>
+      <outbound>
+        <link to="register.php" method="GET" text="Don't have an account?">
+          <text>Register here</text>
+        </link>
+        <link to="register.php" method="POST" text="Create Account Button">
+          <text>Create Account</text>
+        </link>
+        <link to="index.php" method="GET" text="Back to Home">
+          <text>← Back to Home</text>
+        </link>
+        <link to="dashboard.php" method="POST" condition="success" text="Redirect on successful login">
+          <redirect>Session created, user authenticated</redirect>
+        </link>
+      </outbound>
+    </links>
+  </page>
+
+  <!-- DASHBOARD PAGE -->
+  <page name="dashboard.php" auth="◇" type="protected">
+    <title>Dashboard - Welcome</title>
+    <path>/dashboard.php</path>
+    <description>User dashboard showing profile info and quick links</description>
+    <requires_login>true</requires_login>
+    <links>
+      <outbound>
+        <link to="profile.php" method="GET" text="Edit Profile Button">
+          <text>Edit Profile</text>
+        </link>
+        <link to="settings.php" method="GET" text="Settings Button">
+          <text>Settings</text>
+        </link>
+        <link to="logout.php" method="GET" text="Logout Link">
+          <text>Logout (username)</text>
+        </link>
+        <link to="logout.php" method="GET" text="Logout Button">
+          <text>Logout</text>
+        </link>
+        <link to="index.php" method="GET" text="Home Link">
+          <text>🏠 Home Page</text>
+        </link>
+      </outbound>
+      <navigation>
+        <navbar>Dashboard | Profile | Settings | Logout (username)</navbar>
+      </navigation>
+    </links>
+  </page>
+
+  <!-- PROFILE PAGE -->
+  <page name="profile.php" auth="◇" type="protected">
+    <title>Profile - Edit Information</title>
+    <path>/profile.php</path>
+    <description>Edit user profile and change password</description>
+    <requires_login>true</requires_login>
+    <fields>
+      <input type="text" name="username" label="Username" readonly="true"/>
+      <input type="email" name="email" label="Email" readonly="true"/>
+      <input type="text" name="first_name" label="First Name" editable="true"/>
+      <input type="text" name="last_name" label="Last Name" editable="true"/>
+      <input type="password" name="new_password" label="New Password" optional="true"/>
+      <input type="password" name="confirm_password" label="Confirm Password" optional="true"/>
+    </fields>
+    <links>
+      <outbound>
+        <link to="dashboard.php" method="GET" text="Back to Dashboard Button">
+          <text>← Back to Dashboard</text>
+        </link>
+        <link to="settings.php" method="GET" text="Settings Button">
+          <text>Settings</text>
+        </link>
+        <link to="logout.php" method="GET" text="Logout Button">
+          <text>Logout</text>
+        </link>
+        <link to="profile.php" method="POST" condition="success" text="Update Profile">
+          <message>Profile updated successfully!</message>
+        </link>
+      </outbound>
+      <navigation>
+        <navbar>Dashboard | Profile | Settings | Logout (username)</navbar>
+      </navigation>
+    </links>
+  </page>
+
+  <!-- SETTINGS PAGE -->
+  <page name="settings.php" auth="◇" type="protected">
+    <title>Settings - Account Management</title>
+    <path>/settings.php</path>
+    <description>Account settings and account deletion</description>
+    <requires_login>true</requires_login>
+    <features>
+      <feature name="delete_account" requires_password="true">
+        <description>Permanently delete user account</description>
+        <confirmation required="true">Are you sure? This cannot be undone.</confirmation>
+      </feature>
+    </features>
+    <links>
+      <outbound>
+        <link to="dashboard.php" method="GET" text="Back to Dashboard Button">
+          <text>← Back to Dashboard</text>
+        </link>
+        <link to="profile.php" method="GET" text="Edit Profile Button">
+          <text>Edit Profile</text>
+        </link>
+        <link to="index.php" method="GET" text="Home Button">
+          <text>Home</text>
+        </link>
+        <link to="index.php" method="POST" condition="delete_success" text="Account deletion redirects to home">
+          <redirect>Session destroyed, user deleted</redirect>
+        </link>
+      </outbound>
+      <navigation>
+        <navbar>Dashboard | Profile | Settings | Logout (username)</navbar>
+      </navigation>
+    </links>
+  </page>
+
+  <!-- LOGOUT PAGE -->
+  <page name="logout.php" auth="◇" type="handler">
+    <title>Logout - Signing Out</title>
+    <path>/logout.php</path>
+    <description>Session termination handler</description>
+    <requires_login>true</requires_login>
+    <action type="session" method="destroy">
+      <description>Destroys user session and logs out</description>
+    </action>
+    <links>
+      <outbound>
+        <link to="index.php" method="redirect" text="Default redirect after logout">
+          <message>You have been logged out successfully.</message>
+        </link>
+      </outbound>
+    </links>
+  </page>
+
+</map>
+
+<!-- 
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    NAVIGATION FLOW SUMMARY                                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+PUBLIC FLOW (Not Logged In):
+  Home → Register → Login → Dashboard
+  Home → Login → Dashboard
+  Register → Login → Dashboard
+
+AUTHENTICATED FLOW (Logged In):
+  Dashboard → Profile → Dashboard
+  Dashboard → Settings → Dashboard
+  Dashboard → Logout → Home
+  Profile → Settings → Profile
+  Settings → Profile → Dashboard
+
+NAVIGATION AVAILABLE ON ALL PAGES:
+  Home Link (index.php)
+  Dashboard Link (if logged in)
+  Profile Link (if logged in)
+  Settings Link (if logged in)
+  Register Link (if not logged in)
+  Login Link (if not logged in)
+  Logout Link (if logged in)
+-->
+
+<!-- 
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         HELPER FUNCTIONS                                   ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Location: config/functions.php
+
+Function List:
+  1. isLoggedIn() - Check if user is authenticated
+  2. requireLogin() - Redirect to login if not authenticated
+  3. redirectIfLoggedIn() - Redirect to dashboard if already logged in
+  4. hashPassword($password) - Hash password with bcrypt
+  5. verifyPassword($password, $hash) - Verify password against hash
+  6. sanitize($input) - Sanitize user input
+  7. validateEmail($email) - Validate email format
+  8. getUserById($conn, $id) - Get user by ID
+  9. getUserByEmail($conn, $email) - Get user by email
+  10. getUserByUsername($conn, $username) - Get user by username
+  11. setFlash($type, $message) - Set flash message
+  12. getFlash() - Get and clear flash message
+-->
+
+<!-- 
+╔════════════════════════════════════════════════════════════════════════════╗
+║                      DATABASE QUERIES MAP                                  ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Register Page (register.php):
+  - SELECT id FROM users WHERE username = ?
+  - SELECT * FROM users WHERE email = ?
+  - INSERT INTO users (username, email, password, first_name, last_name) VALUES (?, ?, ?, ?, ?)
+
+Login Page (login.php):
+  - SELECT id, username, email, password FROM users WHERE email = ?
+
+Dashboard Page (dashboard.php):
+  - SELECT id, username, email, first_name, last_name, created_at FROM users WHERE id = ?
+
+Profile Page (profile.php):
+  - SELECT id, username, email, first_name, last_name FROM users WHERE id = ?
+  - UPDATE users SET first_name = ?, last_name = ? WHERE id = ?
+  - UPDATE users SET first_name = ?, last_name = ?, password = ? WHERE id = ?
+
+Settings Page (settings.php):
+  - SELECT password FROM users WHERE id = ?
+  - DELETE FROM users WHERE id = ?
+-->
